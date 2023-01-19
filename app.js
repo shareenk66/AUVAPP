@@ -117,7 +117,7 @@ app.post("/users", async (request,response) => {
             if (err) {
               console.log(err);
             }
-            response.redirect("/");
+            response.redirect("/elections");
           });
     } catch (error) {
         console.log(error);
@@ -139,17 +139,82 @@ app.get("/elections/new",async (request,response)=>{
 })
 
 app.post("/elections/new",(request,response)=>{
-    const newElection= Election.addElection({electionName:request.body.electionName,adminId:request.user.id})
-    response.redirect("/elections")
+    try{
+        const newElection= Election.addElection({electionName:request.body.electionName,adminId:request.user.id})
+        response.redirect("/elections")
+
+    } catch{
+        response.redirect("electionss.new")
+    }
 })
 
-app.get("/elections/:id",async (request,response)=>{
-    const election=Election.findByPk(request.params.id)
+app.get("/elections/:id",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+    const election= await Election.findByPk(request.params.id)
+    console.log(election);
     const questions=await Question.getAllQuestions(request.params.id)
     const questionsCount = questions.length
     const voters=await Voter.getAllVoters(request.params.id)
     const votersCount = voters.length
     response.render("electionpage",{questionsCount,votersCount,election})
 })
+
+app.get("/elections/:id/questions",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+    const questionsList = await Question.getAllQuestions(request.params.id)
+    const election = await Election.findByPk(request.params.id)
+    response.render("questions",{questionsList,election})
+})
+app.get("/elections/:id/voters",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+    const votersList = await Voter.getAllVoters(request.params.id)
+    const election = await Election.findByPk(request.params.id)
+    response.render("voters",{votersList,election})
+})
+
+app.get("/elections/:id/questions/new",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+  const election=await Election.findByPk(request.params.id)
+    response.render("newQuestions",{csrfToken:request.csrfToken(),election})
+})
+
+app.post("/elections/:id/questions/new",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+  const newQuestion=await Question.addQuestion({
+    questionName:request.body.questionName,
+    questionDescription:request.body.questionDescription,
+    electionId:request.params.id
+  })
+  response.redirect(`/elections/${request.params.id}/questions`)
+})
+
+app.get("/elections/:id/voters/new",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+    const election=await Election.findByPk(request.params.id)
+    response.render("newVoters",{csrfToken:request.csrfToken(),election})
+})
+
+app.post("/elections/:id/voters/new",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+  const hashedPwd= await bcrypt.hash(request.body.password,saltRounds)
+  const newVoter=await Voter.addVoter({
+    voterId:request.body.voterId,
+    password:hashedPwd,
+    electionId:request.params.id
+  })
+  console.log(newVoter);
+  response.redirect(`/elections/${request.params.id}/voters`)
+})
+
+app.get("/elections/:eid/questions/:qid",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+    const question= await Question.findByPk(request.params.qid)
+    const answersList = await Answer.getAnswers(question.id)
+    const election = await Election.findByPk(request.params.eid)
+    response.render("questionPage",{csrfToken:request.csrfToken(),question,answersList,election})
+})
+
+app.post("/elections/:eid/questions/:qid",connectEnsureLogin.ensureLoggedIn(),async (request,response)=>{
+  const answer=await Answer.addAnswer({
+    answerName:request.body.answerName,
+    questionId:request.params.qid
+  })
+  console.log(answer);
+  response.redirect(`/elections/${request.params.eid}/questions/${request.params.qid}`)
+})
+
+
 
 module.exports = app;

@@ -8,10 +8,10 @@
 </head>
 <body>
     <h1>Create new Election</h1>
-    <form action="/elections/new" method="post">
+    <form action="/elections/<%= election.id %>/questions/new" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <input type="text" placeholder="Whats your election name" name="electionName">
-        
+        <input type="text" placeholder="Whats your election name" name="questionName">
+        <textarea name="questionDescription" id="" cols="20" rows="3"></textarea>
         <input type="submit" value="Create">
     </form>
 </body>

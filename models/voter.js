@@ -19,10 +19,20 @@ module.exports = (sequelize, DataTypes) => {
         }
       })
     }
+    static async addVoter({voterId,password,electionId}){
+      return await Voter.create({
+        
+          voterId,
+          password,
+          electionId
+        
+      })
+    }
   }
   Voter.init({
     voterId: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    electionId:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Voter',

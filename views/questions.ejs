@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1><%= election.electionName %>-ballot </h1>
+    <ul>
+        <% for (let i=0;i<questionsList.length;i++){ %>
+            <li><a href="/elections/<%= election.id %>/questions/<%= questionsList[i].id %>"><%= questionsList[i].questionName %></a></li>
+        <% } %> 
+    </ul>
+    <a href="/elections/<%= election.id %>/questions/new">Create new question</a>
+</body>
+</html>

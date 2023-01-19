@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Q.<%= question.questionName %> </h1>
+    <h3><%= question.questionDescription %> </h3>
+    <ul>
+        <% for( let i = 0; i < answersList.length; i++ ) { %>
+        <li><%=answersList[i].answerName%></li>
+        <% } %>
+    </ul>
+    <form action="/elections/<%= election.id %>/questions/<%= question.id %>" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="text" placeholder="Answer Name" name="answerName">
+        <input type="submit" value="Add answer">
+    </form>
+</body>
+</html>

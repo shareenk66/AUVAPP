@@ -19,10 +19,19 @@ module.exports = (sequelize, DataTypes) => {
         }
       })
     }
+
+    static async addQuestion({questionName,questionDescription,electionId}){
+      return Question.create({
+        questionName,
+        questionDescription,
+        electionId
+      })
+    }
   }
   Question.init({
     questionName: DataTypes.STRING,
-    questionDescription: DataTypes.TEXT
+    questionDescription: DataTypes.TEXT,
+    electionId:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Question',

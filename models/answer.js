@@ -12,10 +12,25 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+
+    static async getAnswers(questionId){
+      return await Answer.findAll({
+        where:{
+          questionId
+        }
+      })
+    }
+    static async addAnswer({answerName,questionId}){
+      return await Answer.create({
+        answerName,
+        questionId
+      })
+    }
   }
   Answer.init({
     answerName: DataTypes.STRING,
-    voteCount: DataTypes.INTEGER
+    voteCount: DataTypes.INTEGER,
+    questionId:DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Answer',
