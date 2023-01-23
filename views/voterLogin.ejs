@@ -16,11 +16,12 @@
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %> 
             <h6 class="py-4 font-bold">Login to your account</h6>
-            <form action="/session" method="post">
+            <form action="/elections/<%=id%>/loginVoter" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken%>">
+
                 <div class="py-3 font-bold">
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" class="border border-gray-400 font-medium p-0.5 w-full rounded">
+                    <label for="email">Voter Id:</label>
+                    <input type="text" name="voterId" class="border border-gray-400 font-medium p-0.5 w-full rounded">
                 </div>
                 <div class="py-3 font-bold">
                     <label for="password">password:</label>

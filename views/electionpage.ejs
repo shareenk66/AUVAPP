@@ -3,16 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Election page</title>
+    <script>
+         var token = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content")
+
+        function endElection(id) {
+            fetch(`/elections/${id}/endelection`, {
+                method: "put",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "_csrf": token
+                })
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        window.open(`/elections/${id}/results`,"_blank");
+                        window.location.reload()
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+    </script>
 </head>
 <body>
+    <%- include('header.ejs') %>
+    <a href="/signout">Signout</a>
     <h1><%= election.electionName %> </h1>
     <p>Your election has <%= questionsCount %>  questions in the ballot </p>
-    <button><a href="/elections/<%= election.id %>/questions">Manage Questions</a></button>
-    <p>Your election has <%= votersCount %> registered voters  </p>
-    <button><a href="/elections/<%= election.id %>/voters">Manage Voters</a></button>
+    <% if (election.runningStatus) { %>
+        Election is running at <a href="/elections/<%= election.id %>/voting">/elections/<%= election.id %>/voting</a>
+        <% }else{ %>
+            <button><a href="/elections/<%= election.id %>/questions">Manage Questions</a></button>
+            <%}%>
+            <p>Your election has <%= votersCount %> registered voters  </p>
+            <button><a href="/elections/<%= election.id %>/voters">Manage Voters</a></button>
     <br><hr>
-    <a href="">Launch Election</a>
+    <% if (election.runningStatus) { %>
+       <button onclick="endElection(<%= election.id %>)" >End Election</button>
+       <a href="/elections/<%= election.id %>/results"><button>results</button></a>
+        <% }else{ %>
+    <a href="/elections/<%= election.id %>/preview">Launch Election</a>
+    <% } %> 
 </body>
 </html>

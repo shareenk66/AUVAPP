@@ -23,8 +23,17 @@ module.exports = (sequelize, DataTypes) => {
     static async addAnswer({answerName,questionId}){
       return await Answer.create({
         answerName,
+        voteCount:0,
         questionId
       })
+    }
+    static async updateCount(id){
+      return Answer.increment("voteCount", {
+        where: {
+          id,
+        },
+      });
+    
     }
   }
   Answer.init({

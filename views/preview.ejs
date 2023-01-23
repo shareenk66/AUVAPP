@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        var token = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content")
+
+        function startElection(id, allQ2) {
+        
+        
+        if (!allQ2) {
+            alert("All questions in the ballot doesn't have at least of two answer options")
+        }
+        else{
+            console.log("running...");
+                fetch(`/elections/${id}/start`, {
+                    method: "put",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        "_csrf": token
+                    })
+                })
+                    .then((res) => {
+                        if (res.ok) {
+                            window.location.replace(`/elections/${id}`);
+                        }
+                    })
+                    .catch((err) => console.log(err));
+            
+        }
+    }
+    </script>
+</head>
+<body>
+    <%- include('header.ejs') %>
+    <h1><%= election.electionName %> </h1>
+    <button onclick="startElection(<%=election.id%>,<%=allQ2%>)">Start Election</button>
+    <% for( let question = 0; question < data.length; question++ ) { %>
+        <section>
+            <h3>Q.<%= data[question].questionName %> </h3>
+            <h5><%= data[question].questionDescription %> </h5>
+            <ol>
+                <% for( let answer = 0; answer < data[question].answers.length; answer++ ) { %>
+                 <li><%= data[question].answers[answer].answerName %> </li>
+                <% } %>
+            </ol>
+        </section>
+        <br>
+        <hr>
+    <% } %>
+</body>
+</html>

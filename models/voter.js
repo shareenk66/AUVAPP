@@ -32,7 +32,8 @@ module.exports = (sequelize, DataTypes) => {
   Voter.init({
     voterId: DataTypes.STRING,
     password: DataTypes.STRING,
-    electionId:DataTypes.INTEGER
+    electionId:DataTypes.INTEGER,
+    voteStatus:DataTypes.BOOLEAN,
   }, {
     sequelize,
     modelName: 'Voter',

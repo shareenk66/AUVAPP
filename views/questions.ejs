@@ -3,14 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ques-ballot</title>
+    <script>
+         var token = document
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute("content");
+        function deleteQuestion(id,qid,quesCount){
+            if(quesCount<2){
+                alert("Cannot perform del operation")
+            }else{
+            fetch(`/elections/${id}/questions/${qid}`,{
+               method: "delete",
+               headers: {"Content-Type": "application/json" }, 
+               body: JSON.stringify({
+                "_csrf": token
+               })
+            })
+               .then((res) => {
+                 if (res.ok) {
+                    window.location.reload();
+                 }
+               })
+               .catch((err) => console.error(err));
+            }}
+    </script>
 </head>
 <body>
+    <%- include('header.ejs') %>
     <h1><%= election.electionName %>-ballot </h1>
     <ul>
         <% for (let i=0;i<questionsList.length;i++){ %>
             <li><a href="/elections/<%= election.id %>/questions/<%= questionsList[i].id %>"><%= questionsList[i].questionName %></a></li>
+            <button onclick="deleteQuestion(<%= election.id %>,<%=  questionsList[i].id %>,<%=  questionsList.length %>)">del</button>
         <% } %> 
     </ul>
     <a href="/elections/<%= election.id %>/questions/new">Create new question</a>

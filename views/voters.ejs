@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
+    <%- include('header.ejs') %>
     <h1><%= election.electionName %>-voters </h1>
     <ul>
         <% for (let i=0;i<votersList.length;i++){ %>

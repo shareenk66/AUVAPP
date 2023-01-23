@@ -3,15 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%= csrfToken %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script>
+         var token = document
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute("content");
+        function editQuestion(id,qid){
+            const editQuestionBtn = document.getElementById('editQuestionBtn')
+            const questionName=document.getElementById("questionName")
+            const questionDescription = document.getElementById("questionDescription")
+            
+            if(editQuestionBtn.innerText==="edit"){
+                questionName.contentEditable=true
+                questionDescription.contentEditable=true
+                editQuestionBtn.innerText="save"
+            }else{
+            fetch(`/elections/${id}/questions/${qid}`,{
+               method: "put",
+               headers: {"Content-Type": "application/json" }, 
+               body: JSON.stringify({
+                questionName:questionName.innerText,
+                questionDescription:questionDescription.innerText,
+                "_csrf": token
+               })
+            })
+               .then((res) => {
+                 if (res.ok) {
+                    window.location.reload();
+                 }
+               })
+               .catch((err) => console.error(err));
+            }
+        }
+        function editAnswer(id,qid,oid){
+            var editAnswerBtn = document.getElementById(oid+"btn")
+            
+            const answer = document.getElementById(oid)
+            
+            if(editAnswerBtn.innerText==="edit"){
+                answer.contentEditable=true
+                editAnswerBtn.innerText="save"
+            }else{
+            fetch(`/elections/${id}/questions/${qid}/answers/${oid}`,{
+               method: "put",
+               headers: {"Content-Type": "application/json" }, 
+               body: JSON.stringify({
+                answerName:answer.innerText,
+                "_csrf": token
+               })
+            })
+               .then((res) => {
+                 if (res.ok) {
+                    window.location.reload();
+                 }
+               })
+               .catch((err) => console.error(err));
+            }
+        }
+        function deleteOption(id,qid,aid){
+            fetch(`/elections/${id}/questions/${qid}/answers/${aid}`,{
+               method: "delete",
+               headers: {"Content-Type": "application/json" }, 
+               body: JSON.stringify({
+                "_csrf": token
+               })
+            })
+               .then((res) => {
+                 if (res.ok) {
+                    window.location.reload();
+                 }
+               })
+               .catch((err) => console.error(err));
+            }
+        
+    </script>
 </head>
 <body>
-    <h1>Q.<%= question.questionName %> </h1>
-    <h3><%= question.questionDescription %> </h3>
+    <%- include('header.ejs') %>
+    <h1 id="questionName"><%= question.questionName %> </h1>
+    <h3 id="questionDescription"><%= question.questionDescription %> </h3>
+    <button onclick="editQuestion(<%=election.id%>,<%=question.id%>)" id="editQuestionBtn">edit</button>
     <ul>
         <% for( let i = 0; i < answersList.length; i++ ) { %>
-        <li><%=answersList[i].answerName%></li>
+        <li id="<%=answersList[i].id%>" class="answer"><%=answersList[i].answerName%></li>
+        <button id="<%=answersList[i].id%>btn" onclick="editAnswer(<%=election.id%>,<%=question.id%>,<%=answersList[i].id%>)">edit</button>
+        <button onclick="deleteOption(<%=election.id%>,<%=question.id%>,<%=answersList[i].id%>)">del</button>
         <% } %>
     </ul>
     <form action="/elections/<%= election.id %>/questions/<%= question.id %>" method="post">

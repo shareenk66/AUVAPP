@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Question.hasMany(models.Answer, {
+        foreignKey: "questionId",
+        onDelete: "CASCADE",
+      });
     }
     static async getAllQuestions(electionId){
       return Question.findAll({

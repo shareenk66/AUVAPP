@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <%- include('header.ejs') %>
+    <h1><%= election.electionName %> </h1>
+    <% for( let question = 0; question < data.length; question++ ) { %>
+        
+        <section>
+            <h3>Q.<%= data[question].questionName %> </h3>
+            <h5><%= data[question].questionDescription %> </h5>
+            <ol>
+                <% for( let answer = 0; answer < data[question].answers.length; answer++ ) { %>
+                 <li><%= data[question].answers[answer].answerName %> : <%= data[question].answers[answer].voteCount %> </li>
+                <% } %>
+            </ol>
+        </section>
+        <br>
+        <hr>
+    <% } %>
+</body>
+</html>

@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Election.hasMany(models.Question, {
+        foreignKey: "electionId",
+        onDelete: "CASCADE",
+      });
+      Election.hasMany(models.Voter, {
+        foreignKey: "electionId",
+        onDelete: "CASCADE",
+      });
     }
 
     static async getAllElections(adminId){
